@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+selector=$(set-selector "${@: -1}")
+shopt -s nullglob
+
+if [[ $selector == *"$" ]] ; then
+	selector="${selector::-1}"
+else
+	selector="$selector*"
+fi
+
+noSelection="true"
+if [[ "$1" == "console" ]] ; then
+  .invoke $@ > >( output-parser-tagged ) 2> >( output-parser-tagged );
+  wait-for-output-parser-tagged
+else
+  # to be restricted to repo, config and build only
+  for f in $selector ;
+  do
+    noSelection="false"
+    .invoke $1 ${@:2:$#-2} $f > >( output-parser-tagged ) 2> >( output-parser-tagged );
+    wait-for-output-parser-tagged
+  done;
+fi
+
+#if noSelection and method is release, deploy or run then
+  # invoke if fully qualified image name (and image does exist)
+#fi

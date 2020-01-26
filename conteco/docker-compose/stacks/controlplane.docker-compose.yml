@@ -1,0 +1,26 @@
+---
+version: '3'
+services:
+
+# START SERVICE controlplane.cli
+  controlplane:
+    image: ${CONTECO_REGISTRY}${CONTECO_REALM}/conteco.${CONTECO_DC_GLOBAL_IMAGE_NAME}
+    environment: []
+    command: [${CONTECO_DC_CONTROLPLANE_COMMAND}]
+    volumes: [${CONTECO_DC_CONTROLPLANE_VOLUMES}]
+    ports: []
+    networks: []
+    deploy:
+      mode: ${CONTECO_DC_CONTROLPLANE_DEPLOY_MODE}
+      resources:
+        limits:
+          cpus: '${CONTECO_DC_CONTROLPLANE_DEPLOY_RESOURCES_LIMITS_CPUS}'
+          memory: '${CONTECO_DC_CONTROLPLANE_DEPLOY_RESOURCES_LIMITS_MEMORY}'
+        reservations:
+          cpus: '${CONTECO_DC_CONTROLPLANE_DEPLOY_RESOURCES_RESERVATIONS_CPUS}'
+          memory: '${CONTECO_DC_CONTROLPLANE_DEPLOY_RESOURCES_RESERVATIONS_MEMORY}'
+      labels: [${CONTECO_DC_CONTROLPLANE_DEPLOY_LABELS}]
+# END SERVICE controlplane.cli
+
+volumes: {${CONTECO_DC_GLOBAL_VOLUMES}}
+networks: {}
