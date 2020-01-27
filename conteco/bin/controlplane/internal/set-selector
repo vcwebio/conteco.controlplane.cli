@@ -4,11 +4,11 @@ selector="$1"
 if [[ "$selector" == "." ]] ; then
 	selector=
 fi
-if [[ $selector != "${CONTECO_REALM}/${CONTECO_ECOSYSTEM}."* && $selector != "${CONTECO_REALM}/${CONTECO_ECOSYSTEM}" ]] ; then
-	if [[ $selector == "${CONTECO_ECOSYSTEM}."* ]] ; then
+if [[ $selector != "${CONTECO_REALM}/${CONTECO_CONTROLPLANE}."* && $selector != "${CONTECO_REALM}/${CONTECO_CONTROLPLANE}" ]] ; then
+	if [[ $selector == "${CONTECO_CONTROLPLANE}."* ]] ; then
 		selector="${CONTECO_REALM}/${selector}"
 	else
-		selector="${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.${selector}"
+		selector="${CONTECO_REALM}/${CONTECO_CONTROLPLANE}.${selector}"
 	fi
 fi
 echo $selector

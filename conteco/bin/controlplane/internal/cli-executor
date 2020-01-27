@@ -1,40 +1,43 @@
 #!/usr/bin/env bash
-CONTROLPLANE="$1"
-shift
-selector=$(set-selector "$1")
-shift
-shopt -s nullglob
+(
+	echo "$@"
+	export CONTECO_CONTROLPLANE="$1"
+	shift
+	selector=$(set-selector "$1")
+	shift
+	shopt -s nullglob
 
-if [[ $selector == *"$" ]] ; then
-	selector="${selector::-1}"
-else
-	selector="$selector*"
-fi
-
-noSelection="true"
-if [[ "$1" == "console" ]] ; then
-	echo "$CONTROLPLANE $@"
-	if [[ "$CONTECO_COMMAND_OUTPUT" == "silent" ]] ; then
-	  docker run -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${CONTROLPLANE} --interactive .invoke $@ > /dev/null
-	elif [[ "$CONTECO_COMMAND_OUTPUT" == "errors" ]] ; then
-	  docker run -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${CONTROLPLANE} --interactive .invoke $@ > /dev/null  2> >( output-parser-tagged );
+	if [[ $selector == *"$" ]] ; then
+		selector="${selector::-1}"
 	else
-	  docker run -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${CONTROLPLANE} --interactive .invoke $@ > >( output-parser-tagged ) 2> >( output-parser-tagged );
-		wait-for-output-parser-tagged
+		selector="$selector*"
 	fi
-else
-  # to be restricted to repo, config and build only
-  for f in $selector ;
-  do
-		echo "$CONTROLPLANE $@ $f"
-    noSelection="false"
+
+	noSelection="true"
+	if [[ "$1" == "console" ]] ; then
+		echo "$CONTROLPLANE $@"
 		if [[ "$CONTECO_COMMAND_OUTPUT" == "silent" ]] ; then
-			docker run -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${CONTROLPLANE} --interactive .invoke $@ $f > /dev/null
+		  docker run -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${CONTECO_CONTROLPLANE} --interactive .invoke $@ > /dev/null
 		elif [[ "$CONTECO_COMMAND_OUTPUT" == "errors" ]] ; then
-			docker run -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${CONTROLPLANE} --interactive .invoke $@ $f > /dev/null 2> >( output-parser-tagged );
+		  docker run -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${CONTECO_CONTROLPLANE} --interactive .invoke $@ > /dev/null  2> >( output-parser-tagged );
 		else
-			docker run -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${CONTROLPLANE} --interactive .invoke $@ $f > >( output-parser-tagged ) 2> >( output-parser-tagged );
+		  docker run -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${CONTECO_CONTROLPLANE} --interactive .invoke $@ > >( output-parser-tagged ) 2> >( output-parser-tagged );
 			wait-for-output-parser-tagged
 		fi
-  done;
-fi
+	else
+	  # to be restricted to repo, config and build only
+	  for f in $selector ;
+	  do
+			echo "$CONTROLPLANE $@ $f"
+	    noSelection="false"
+			if [[ "$CONTECO_COMMAND_OUTPUT" == "silent" ]] ; then
+				docker run -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${CONTECO_CONTROLPLANE} --interactive .invoke $@ $f > /dev/null
+			elif [[ "$CONTECO_COMMAND_OUTPUT" == "errors" ]] ; then
+				docker run -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${CONTECO_CONTROLPLANE} --interactive .invoke $@ $f > /dev/null 2> >( output-parser-tagged );
+			else
+				docker run -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${CONTECO_CONTROLPLANE} --interactive .invoke $@ $f > >( output-parser-tagged ) 2> >( output-parser-tagged );
+				wait-for-output-parser-tagged
+			fi
+	  done;
+	fi
+)

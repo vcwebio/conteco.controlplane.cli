@@ -45,7 +45,7 @@ fi
 # creating controlplane_repos data volume
 hasVolume=$(docker volume ls | grep controlplane_repos | wc -l)
 if (( $hasVolume > 0 )) ; then
-  if [[ " reset continue " != *"$4"* ]] ; then
+  if [[ "$4" == "" || " reset continue " != *"$4"* ]] ; then
     echo "The controlplane_repos data volume exists already."
     echo "Start the script again using 'continue' to keep the volume,"
     echo " or 'reset' to remove the existing volume."
@@ -91,18 +91,14 @@ commandPrefix='@'
 command=""
 while [[ "$command" != "exit" ]]
 do
-  read -p "$commandPrefix: " command
+  read -p "${CONTECO_COMMAND_OUTPUT}${commandPrefix}: " command
   if [[ "$command" == "@"* ]] ; then
     commandPrefix="$command"
-  elif [[ " silent errors verbose " == *"$command"* ]] ; then
-    export CONTECO_COMMAND_OUTPUT="$command"
+  elif [[ "$commane" != "" && " --silent --errors --verbose " == *"$command"* ]] ; then
+    export CONTECO_COMMAND_OUTPUT="${command:2}"
   elif [[ " bash exit " == *"$command"* ]] ; then
     $command
   else
     cli-executor ${commandPrefix:1} $command
   fi
 done
-
-echo ""
-echo "Exiting controlplane.cli ..."
-echo ""
