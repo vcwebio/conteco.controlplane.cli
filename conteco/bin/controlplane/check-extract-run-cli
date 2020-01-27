@@ -1,0 +1,108 @@
+#!/usr/bin/env bash
+# $1 current working directory
+# $2 windows / linux / sudo
+# $3 script
+# $4 continue
+export PATH="/conteco/bin/controlplane/internal:$CONTECO_EXECUTIONPLANE_ORIGINALPATH"
+echo ""
+echo ""
+
+# cold start
+if [[ "$2" == "" || " windows linux sudo " != *"$2"* ]] ; then
+  echo "Startup arguments are missing or incorrect."
+  echo "Run the appropriate command below:"
+  echo ""
+  echo "docker run -v %cd%:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-extract-run-cli %cd% windows # WINDOWS"
+  echo "docker run -v $(pwd):/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-extract-run-cli $(pwd) linux # LINUX"
+  echo "docker run -v $(pwd):/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-extract-run-cli $(pwd) sudo # LINUX WITH SUDO"
+  echo ""
+  exit 0
+fi
+
+# Generate cli and cli.bat if missing
+if [[ ! -f /conteco/pwd/cli || ! -f /conteco/pwd/cli.bat ]] ; then
+  DOLLAR='$'
+  echo "Generating cli ..."
+  echo '#!/usr/bin/env bash' > /conteco/pwd/cli
+  if [[ "$2" == "sudo" ]] ; then
+    echo "sudo docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v ${DOLLAR}(pwd):/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-extract-run-cli ${DOLLAR}(pwd) sudo cli ${DOLLAR}@" >> /conteco/pwd/cli
+  else
+    echo "docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v ${DOLLAR}(pwd):/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-extract-run-cli ${DOLLAR}(pwd) linux cli ${DOLLAR}@" >> /conteco/pwd/cli
+  fi
+  echo "Generating cli.bat ..."
+  echo "@echo off" > /conteco/pwd/cli.bat
+  echo "docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v %cd%:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-extract-run-cli %cd% windows cli.bat %*" >> /conteco/pwd/cli.bat
+  echo ""
+  echo "Run the cli script: cli.bat (WINDOWS) or ./cli (LINUX)"
+  echo ""
+  echo "Arguments:"
+  echo "Use continue to keep existing controplane_repos data volume, or reset to create new."
+  echo "You can switch CONTECO_REALM by supplying the new realm as last argument"
+  echo ""
+  exit 0
+fi
+
+# creating controlplane_repos data volume
+hasVolume=$(docker volume ls | grep controlplane_repos | wc -l)
+if (( $hasVolume > 0 )) ; then
+  if [[ " reset continue " != *"$4"* ]] ; then
+    echo "The controlplane_repos data volume exists already."
+    echo "Start the script again using 'continue' to keep the volume,"
+    echo " or 'reset' to remove the existing volume."
+    echo ""
+    exit 0
+  elif [[ "$4" == "reset" ]] ; then
+    docker container prune --force > /dev/null
+    docker volume rm --force controlplane_repos > /dev/null
+  fi
+fi
+hasVolume=$(docker volume ls | grep controlplane_repos | wc -l)
+if (( $hasVolume < 1 )) ; then
+  pwd_volume="$1"
+  if [[ "$pwd_volume" == *"\\"* && "$2" == "windows" ]] ; then
+  	pwd_volume=$( echo $pwd_volume | tr '\\' '\/' | tr -d ':' )
+  	pwd_volume="/${pwd_volume//\/\//\/}"
+  	pwd_volume="${pwd_volume,,}"
+  fi
+  echo "Creating controlplane_repos data volume ..."
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=$pwd_volume controlplane_repos > /dev/null
+  echo ""
+fi
+
+# setting CONTECO_REALM
+realm="$5"
+if [[ " reset continue " != *"$4"* ]] ; then
+  realm="$4"
+fi
+if [[ "$realm" != "" ]] ; then
+  echo "Amending CONTECO_REALM to $realm"
+  echo ""
+  export CONTECO_REALM="$realm"
+fi
+
+echo "controlplane.cli ready - Entering command mode ..."
+echo ""
+echo "command structure: [controlplane] [selector] [API section] [method] [arguments]"
+echo "set command prefix with @ - e.g. @conteco control repo"
+echo "Issue verbose / silent command for verbose / no output."
+echo ""
+export CONTECO_COMMAND_OUTPUT="verbose"
+commandPrefix='@'
+command=""
+while [[ "$command" != "exit" ]]
+do
+  read -p "$commandPrefix: " command
+  if [[ "$command" == "@"* ]] ; then
+    commandPrefix="$command"
+  elif [[ " silent errors verbose " == *"$command"* ]] ; then
+    export CONTECO_COMMAND_OUTPUT="$command"
+  elif [[ " bash exit " == *"$command"* ]] ; then
+    $command
+  else
+    cli-executor ${commandPrefix:1} $command
+  fi
+done
+
+echo ""
+echo "Exiting controlplane.cli ..."
+echo ""
