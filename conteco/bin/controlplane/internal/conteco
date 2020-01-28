@@ -1,3 +1,0 @@
-#!/usr/bin/env bash
-export CONTECO_ECOSYSTEM="conteco"
-cli-executor $@

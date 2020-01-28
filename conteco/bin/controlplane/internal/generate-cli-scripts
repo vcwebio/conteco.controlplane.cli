@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+DOLLAR='$'
+echo "Generating cli scripts ..."
+echo '#!/usr/bin/env bash' > /conteco/pwd/cli
+if [[ "$1" == "sudo" ]] ; then
+  echo "sudo docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v ${DOLLAR}(pwd):/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-extract-run-cli ${DOLLAR}(pwd) sudo cli ${DOLLAR}@" >> /conteco/pwd/cli
+else
+  echo "docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v ${DOLLAR}(pwd):/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-extract-run-cli ${DOLLAR}(pwd) linux cli ${DOLLAR}@" >> /conteco/pwd/cli
+fi
+echo "Generating cli.bat ..."
+echo "@echo off" > /conteco/pwd/cli.bat
+echo "docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v %cd%:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-extract-run-cli %cd% windows cli.bat %*" >> /conteco/pwd/cli.bat
+echo ""
+echo "Run the cli script: cli.bat (WINDOWS) or ./cli (LINUX)"
+echo ""
+echo "Arguments: [continue / reset] [realm]"
+echo "Use continue to keep existing controplane_repos data volume, or reset to create new."
+echo "You can switch CONTECO_REALM_RUNTIME by supplying the realm as last argument"
+echo ""

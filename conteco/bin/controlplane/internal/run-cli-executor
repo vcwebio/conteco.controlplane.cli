@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+echo "controlplane.cli ready - Entering command mode ..."
+echo ""
+echo "command structure: [controlplane] [selector] [API section] [method] [arguments]"
+echo "set command prefix with @ - e.g. @conteco control repo"
+echo "Issue --verbose / --silent directive for verbose / no output."
+echo ""
+export CONTECO_COMMAND_OUTPUT="verbose"
+commandPrefix='@'
+command=""
+while [[ "$command" != "exit" ]]
+do
+  read -p "${CONTECO_COMMAND_OUTPUT}${commandPrefix}: " command
+  if [[ "$command" == "@"* ]] ; then
+    commandPrefix="$command"
+  elif [[ "$commane" != "" && " --silent --verbose " == *"$command"* ]] ; then
+    export CONTECO_COMMAND_OUTPUT="${command:2}"
+  elif [[ " bash exit " == *"$command"* ]] ; then
+    $command
+  else
+    cli-executor ${commandPrefix:1} $command
+  fi
+done
