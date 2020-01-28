@@ -7,21 +7,19 @@ do
     # check if it is an executionplane message
     executionplane=$(echo "$INPUT" | jq -r '. | .executionplane')
 
-#    (echo "$INPUT" | jq '.')
-
-	# go for inner executionplane
-	continue="true"
-	while [[ $INPUT == "{"* && $continue == "true" ]]
-		do
-		continue="false"
-		executionplane=$(echo "$INPUT" | jq -r '. | .executionplane')
-		message=$(echo "$INPUT" | jq -r '. | .message')
-		if [[ $executionplane == "null" && $message != "null" && $message == "{"* ]] ; then
-			INPUT=$message
-			executionplane=$(echo "$INPUT" | jq -r '. | .executionplane')
-			continue="true"
-		fi
-		done
+  	# go for inner executionplane
+  	continue="true"
+  	while [[ $INPUT == "{"* && $continue == "true" ]]
+  		do
+  		continue="false"
+  		executionplane=$(echo "$INPUT" | jq -r '. | .executionplane')
+  		message=$(echo "$INPUT" | jq -r '. | .message')
+  		if [[ $executionplane == "null" && $message != "null" && $message == "{"* ]] ; then
+  			INPUT=$message
+  			executionplane=$(echo "$INPUT" | jq -r '. | .executionplane')
+  			continue="true"
+  		fi
+  	done
 
     # parse if executionplane message
     if [[ $executionplane != "null" ]] ; then
@@ -41,17 +39,17 @@ do
 
     # output message found unless source is wrapper
     else
-		source=$(echo "$INPUT" | jq -r '. | .source')
-		if [[ "$source" != "wrapper" ]] ; then
-			if [[ "$source" != "logger" ]] ; then
-				(echo "$INPUT" | jq '.')
-			else
-				level=$(echo "$INPUT" | jq -r '. | .level')
-				level="DIRECT >> $level          "
-				message=$(echo "$INPUT" | jq -r '. | .message')
-				echo "${level:0:20} $message"
-			fi
-		fi
+  		source=$(echo "$INPUT" | jq -r '. | .source')
+  		if [[ "$source" != "wrapper" ]] ; then
+  			if [[ "$source" != "logger" ]] ; then
+  				(echo "$INPUT" | jq '.')
+  			else
+  				level=$(echo "$INPUT" | jq -r '. | .level')
+  				level="DIRECT >> $level          "
+  				message=$(echo "$INPUT" | jq -r '. | .message')
+  				echo "${level:0:20} $message"
+  			fi
+  		fi
     fi
 
   # print out if not JSON message

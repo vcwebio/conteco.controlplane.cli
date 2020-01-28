@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-if [[ "$1" == "" || " reset continue " != *"$1"* ]] ; then
+if [[ "$1" == "" || " --reset --continue " != *"$1"* ]] ; then
   echo "The controlplane_repos data volume exists already."
-  echo "Start the script again using 'continue' to keep the volume,"
-  echo " or 'reset' to remove the existing volume."
+  echo "Start the script again using --continue flag to keep the volume,"
+  echo " or --reset flag to remove the existing volume."
   echo ""
   exit 0
-elif [[ "$1" == "reset" ]] ; then
+elif [[ "$1" == "--reset" ]] ; then
   docker container prune --force > /dev/null
   docker volume rm --force controlplane_repos > /dev/null
 fi

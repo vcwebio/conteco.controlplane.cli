@@ -12,6 +12,7 @@ echo "Generating cli.bat ..."
 echo "@echo off" > /conteco/pwd/cli.bat
 echo "docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v %cd%:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-extract-run-cli %cd% windows cli.bat %*" >> /conteco/pwd/cli.bat
 echo ""
+echo "CLI Console v2"
 echo "Run the cli script: cli.bat (WINDOWS) or ./cli (LINUX)"
 echo ""
 echo "Arguments: [continue / reset] [realm]"
