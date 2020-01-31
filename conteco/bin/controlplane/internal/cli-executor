@@ -12,6 +12,7 @@
 			wait-for-output-parser-tagged
 		fi
 	else
+		echo "$CONTECO_CONTROLPLANE $@"
 		selector=$(set-selector "$1")
 		shift
 		shopt -s nullglob

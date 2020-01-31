@@ -3,7 +3,7 @@
 export CONTECO_ECOSYSTEM_RUNTIME="$CONTECO_NAME"
 export CONTECO_REALM_RUNTIME="$CONTECO_REALM"
 realm="$2"
-if [[ " reset continue " != *"$1"* ]] ; then
+if [[ " --reset --continue " != *"$1"* ]] ; then
   realm="$1"
 fi
 if [[ "$realm" != "" ]] ; then

@@ -4,7 +4,7 @@ DOLLAR='$'
 # generating LINUX start
 echo "Generating start ..."
 if [[ "$1" == "sudo" ]] ; then
-  CONTECO_SUDO="sudo"
+  CONTECO_SUDO="sudo "
 fi
 echo '#!/usr/bin/env bash' > /conteco/pwd/start
 echo "mode=${DOLLAR}1" >> /conteco/pwd/start
@@ -12,8 +12,8 @@ echo "if [[ \"${DOLLAR}mode\" != \"modeco\" && \"${DOLLAR}mode\" != \"base\" ]] 
 echo "	mode=\"conteco\"" >> /conteco/pwd/start
 echo "fi" >> /conteco/pwd/start
 echo "echo \"Starting controlplane.${DOLLAR}mode\"" >> /conteco/pwd/start
-echo "${CONTECO_SUDO}docker volume create --driver local --opt type=none --opt o=bind --opt device=${DOLLAR}(pwd)/conteco/pwd controlplane > /dev/null" >> /conteco/pwd/start
-echo "${CONTECO_SUDO}docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v ${DOLLAR}(pwd):/conteco/pwd ${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${DOLLAR}mode --interactive start controlplane ${DOLLAR}2" >> /conteco/pwd/start
+echo "${CONTECO_SUDO}docker volume create --driver local --opt type=none --opt o=bind --opt device=${DOLLAR}(pwd)/conteco/pwd controlplane_repos > /dev/null" >> /conteco/pwd/start
+echo "${CONTECO_SUDO}docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v ${DOLLAR}(pwd):/conteco/pwd ${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${DOLLAR}mode --interactive start controlplane_repos ${DOLLAR}2" >> /conteco/pwd/start
 
 # generating WINDOWS start.bat
 echo "Generating start.bat ..."
