@@ -12,6 +12,11 @@ if [[ "$2" == "" || " windows linux sudo " != *"$2"* ]] ; then
   . message-startup-arguments
   exit 0
 fi
+if [[ "$2" == "windows" ]] ; then
+  export CONTECO_OS="windows"
+else
+  export CONTECO_OS="linux"
+fi
 
 # Generate cli and cli.bat if missing
 if [[ ! -f /conteco/pwd/cli || ! -f /conteco/pwd/cli.bat ]] ; then

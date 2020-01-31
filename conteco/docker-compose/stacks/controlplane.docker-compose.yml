@@ -4,7 +4,7 @@ services:
 
 # START SERVICE controlplane.cli
   controlplane:
-    image: ${CONTECO_REGISTRY}${CONTECO_REALM}/conteco.${CONTECO_DC_GLOBAL_IMAGE_NAME}
+    image: ${CONTECO_REGISTRY}${CONTECO_REALM_RUNTIME}/conteco.${CONTECO_DC_GLOBAL_IMAGE_NAME}
     environment: []
     command: [${CONTECO_DC_CONTROLPLANE_COMMAND}]
     volumes: [${CONTECO_DC_CONTROLPLANE_VOLUMES}]

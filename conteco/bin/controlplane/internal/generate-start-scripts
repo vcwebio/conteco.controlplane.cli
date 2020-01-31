@@ -27,6 +27,8 @@ echo "set \"REPLACETEXT=\\\\\"" >> /conteco/pwd/start.bat
 echo "set \"PWD_VOLUME2=!PWD_VOLUME:%SEARCHTEXT%=%REPLACETEXT%!\"" >> /conteco/pwd/start.bat
 echo "docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v %cd%:/conteco/pwd ${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.%mode% --interactive start %PWD_VOLUME2%  %2" >> /conteco/pwd/start.bat
 
+chmod 777 /conteco/pwd/start*
+
 echo ""
 echo "CLI Console v1"
 echo "Run the cli script: start.bat (WINDOWS) or ./start (LINUX)"

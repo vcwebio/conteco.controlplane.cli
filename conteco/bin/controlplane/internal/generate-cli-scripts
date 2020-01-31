@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 DOLLAR='$'
 echo "Generating cli scripts ..."
 echo '#!/usr/bin/env bash' > /conteco/pwd/cli
@@ -8,6 +7,7 @@ if [[ "$1" == "sudo" ]] ; then
 else
   echo "docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v ${DOLLAR}(pwd):/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-extract-run-cli ${DOLLAR}(pwd) linux cli ${DOLLAR}@" >> /conteco/pwd/cli
 fi
+chmod 777 /conteco/pwd/cli*
 echo "Generating cli.bat ..."
 echo "@echo off" > /conteco/pwd/cli.bat
 echo "docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v %cd%:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-extract-run-cli %cd% windows cli.bat %*" >> /conteco/pwd/cli.bat

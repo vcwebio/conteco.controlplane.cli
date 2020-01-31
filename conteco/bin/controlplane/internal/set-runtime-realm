@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+export CONTECO_ECOSYSTEM_RUNTIME="$CONTECO_NAME"
 export CONTECO_REALM_RUNTIME="$CONTECO_REALM"
 realm="$2"
 if [[ " reset continue " != *"$1"* ]] ; then
