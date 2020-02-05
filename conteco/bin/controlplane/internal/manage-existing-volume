@@ -4,7 +4,6 @@ if [[ "$1" == "" || " --reset " != *"$1"* ]] ; then
   echo "The controlplane_repos data volume exists already."
   echo "To reset the volume, exit the CLI and restart using the --reset."
   echo ""
-  exit 0
 elif [[ "$1" == "--reset" ]] ; then
   docker container prune --force > /dev/null
   docker volume rm --force controlplane_repos > /dev/null
