@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# $1 current working directory
+# $2 windows / linux / sudo
+export PATH="/conteco/bin/controlplane/internal:$CONTECO_EXECUTIONPLANE_ORIGINALPATH"
+echo ""
+echo ""
+
+# create new controlplane_repos volume if required
+hasVolume=$(docker volume ls | grep controlplane_repos | wc -l)
+if (( $hasVolume < 1 )) ; then
+  . create-new-volume "$1" "$2"
+else
+  echo "Controlplane_repos data volume already exists ..."
+  echo ""
+fi
