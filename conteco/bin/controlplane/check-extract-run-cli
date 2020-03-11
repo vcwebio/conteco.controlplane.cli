@@ -20,6 +20,9 @@ fi
 
 # Generate cli and cli.bat if missing
 if [[ ! -f /conteco/pwd/cli || ! -f /conteco/pwd/cli.bat ]] ; then
+  if [[ "$3" == "CONTECO_REGISTRY="* ]] ; then
+    export $3
+  fi
   . generate-start-scripts "$2"
   . generate-cli-scripts "$2"
   exit 0
