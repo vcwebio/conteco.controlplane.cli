@@ -7,9 +7,16 @@ echo ""
 
 # create new controlplane_repos volume if required
 hasVolume=$(docker volume ls | grep controlplane_repos | wc -l)
+if (( $hasVolume > 0 )) ; then
+  docker container prune --force
+  docker volume rm controlplane_repos
+fi
+hasVolume=$(docker volume ls | grep controlplane_repos | wc -l)
 if (( $hasVolume < 1 )) ; then
   . create-new-volume "$1" "$2"
+  echo "Controlplane_repos data volume created ..."
 else
-  echo "Controlplane_repos data volume already exists ..."
-  echo ""
+  echo "Existing Controlplane_repos data volume can not be removed!"
+  echo "CHECK FOLDER LOCATION OF VOLUME AND TAKE ACTION IF REQUIRED!"
 fi
+echo ""
