@@ -13,7 +13,7 @@ echo "	mode=\"conteco\"" >> /conteco/pwd/start
 echo "fi" >> /conteco/pwd/start
 echo "echo \"Starting controlplane.${DOLLAR}mode\"" >> /conteco/pwd/start
 #echo "${CONTECO_SUDO}docker volume create --driver local --opt type=none --opt o=bind --opt device=${DOLLAR}(pwd) controlplane_repos > /dev/null" >> /conteco/pwd/start
-echo "docker run -v /var/run/docker.sock:/var/run/docker.sock ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-create-volume ${DOLLAR}(pwd) linux" >> /conteco/pwd/start
+echo "${CONTECO_SUDO}docker run -v /var/run/docker.sock:/var/run/docker.sock ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-create-volume ${DOLLAR}(pwd) linux" >> /conteco/pwd/start
 echo "${CONTECO_SUDO}docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${DOLLAR}mode --interactive start controlplane_repos ${DOLLAR}2" >> /conteco/pwd/start
 
 # generating WINDOWS start.bat
