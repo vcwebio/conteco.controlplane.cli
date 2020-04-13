@@ -11,12 +11,12 @@ export CONTECO_REPOSITORYPREFIX="${CONTECO_REALM}/${CONTECO_ECOSYSTEM}"
 export CONTECO_INTERACTIVE="true"
 
 # extract registry from image name of running cli container
-if [[ "$(docker container ls | grep var/run/docker.sock )" != "" ]] ; then
+if [[ "$(docker container ls | grep var/run/docker.sock )" == "" ]] ; then
   while [[ "$(docker container ls | grep .cli )" == "" ]] ;
   do
     sleep 1
   done;
   imagePrefix="$(docker container ls | grep .cli | awk '{ print $2 }' FS=' ' | awk '{ print $1 }' FS='/conteco.' )"
-  registry="${imagePrefix/${CONTECO_REALM}/}"
+  registry="$( echo "${imagePrefix/${CONTECO_REALM}/}" | cut -d$'\n' -f 1)"
   export CONTECO_REGISTRY="$registry"
 fi
