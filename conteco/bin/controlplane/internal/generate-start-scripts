@@ -14,7 +14,7 @@ echo "fi" >> /conteco/pwd/start
 echo "echo \"Starting controlplane.${DOLLAR}mode\"" >> /conteco/pwd/start
 #echo "${CONTECO_SUDO}docker volume create --driver local --opt type=none --opt o=bind --opt device=${DOLLAR}(pwd) controlplane_repos > /dev/null" >> /conteco/pwd/start
 echo "${CONTECO_SUDO}docker run -v /var/run/docker.sock:/var/run/docker.sock ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-create-volume ${DOLLAR}(pwd) linux" >> /conteco/pwd/start
-echo "${CONTECO_SUDO}docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${DOLLAR}mode --interactive start controlplane_repos ${DOLLAR}2" >> /conteco/pwd/start
+echo "${CONTECO_SUDO}docker run -it -v /etc:/hostfs/etc:ro -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${DOLLAR}mode --interactive start controlplane_repos ${DOLLAR}2" >> /conteco/pwd/start
 
 # generating WINDOWS start.bat
 echo "Generating start.bat ..."
@@ -27,7 +27,7 @@ echo "set \"SEARCHTEXT=\\\"" >> /conteco/pwd/start.bat
 echo "set \"REPLACETEXT=\\\\\"" >> /conteco/pwd/start.bat
 echo "set \"PWD_VOLUME2=!PWD_VOLUME:%SEARCHTEXT%=%REPLACETEXT%!\"" >> /conteco/pwd/start.bat
 echo "docker run -v /var/run/docker.sock:/var/run/docker.sock ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-create-volume %cd% windows" >> /conteco/pwd/start.bat
-echo "docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v %cd%:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.%mode% --interactive start %PWD_VOLUME2%  %2" >> /conteco/pwd/start.bat
+echo "docker run -it -v /etc:/hostfs/etc:ro -v /var/run/docker.sock:/var/run/docker.sock -v %cd%:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.%mode% --interactive start %PWD_VOLUME2%  %2" >> /conteco/pwd/start.bat
 
 chmod 777 /conteco/pwd/start*
 
