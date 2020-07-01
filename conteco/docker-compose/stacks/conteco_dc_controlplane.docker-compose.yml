@@ -12,7 +12,7 @@ services:
     networks: []
     deploy:
       mode: ${CONTECO_DC_CONTROLPLANE_DEPLOY_MODE}
-      replicas: ${CONTECO_DC_CONTROLPLANE_DEPLOY_REPLICAS}
+      ${CONTECO_DC_CONTROLPLANE_DEPLOY_MODE_REPLICATED_REPLICAS}
       resources:
         limits:
           cpus: '${CONTECO_DC_CONTROLPLANE_DEPLOY_RESOURCES_LIMITS_CPUS}'
