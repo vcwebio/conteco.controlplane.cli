@@ -1,41 +1,63 @@
 #!/usr/bin/env bash
 DOLLAR='$'
 
-# generating LINUX start
-echo "Generating start ..."
+echo "Generating startup scripts ..."
 if [[ "$1" == "sudo" ]] ; then
   CONTECO_SUDO="sudo "
 fi
-echo '#!/usr/bin/env bash' > /conteco/pwd/start
-echo "mode=${DOLLAR}1" >> /conteco/pwd/start
-echo "if [[ \"${DOLLAR}mode\" != \"modeco\" && \"${DOLLAR}mode\" != \"base\" ]] ; then" >> /conteco/pwd/start
-echo "	mode=\"conteco\"" >> /conteco/pwd/start
-echo "fi" >> /conteco/pwd/start
-echo "echo \"Starting controlplane.${DOLLAR}mode\"" >> /conteco/pwd/start
-#echo "${CONTECO_SUDO}docker volume create --driver local --opt type=none --opt o=bind --opt device=${DOLLAR}(pwd) controlplane_repos > /dev/null" >> /conteco/pwd/start
-echo "${CONTECO_SUDO}docker run -v /var/run/docker.sock:/var/run/docker.sock ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-create-volume ${DOLLAR}(pwd) linux" >> /conteco/pwd/start
-echo "${CONTECO_SUDO}docker run -it -v /etc:/hostfs/etc:ro -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${DOLLAR}mode --interactive start controlplane_repos ${DOLLAR}2" >> /conteco/pwd/start
 
-# generating WINDOWS start.bat
-echo "Generating start.bat ..."
-echo "@echo off" > /conteco/pwd/start.bat
-echo "setlocal EnableExtensions EnableDelayedExpansion" >> /conteco/pwd/start.bat
-echo "set mode=%1" >> /conteco/pwd/start.bat
-echo "if not %1==modeco set mode = conteco" >> /conteco/pwd/start.bat
-echo "set \"PWD_VOLUME=%cd%\"" >> /conteco/pwd/start.bat
-echo "set \"SEARCHTEXT=\\\"" >> /conteco/pwd/start.bat
-echo "set \"REPLACETEXT=\\\\\"" >> /conteco/pwd/start.bat
-echo "set \"PWD_VOLUME2=!PWD_VOLUME:%SEARCHTEXT%=%REPLACETEXT%!\"" >> /conteco/pwd/start.bat
-echo "docker run -v /var/run/docker.sock:/var/run/docker.sock ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-create-volume %cd% windows" >> /conteco/pwd/start.bat
-echo "docker run -it -v /etc:/hostfs/etc:ro -v /var/run/docker.sock:/var/run/docker.sock -v %cd%:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.%mode% --interactive start %PWD_VOLUME2%  %2" >> /conteco/pwd/start.bat
+(
+export CONTECO_REPOSITORY_CATEGORY="cluster"
+export CONTECO_STARTUP_MODE="swareco"
+create-startup
+)
 
-chmod 777 /conteco/pwd/start*
+(
+export CONTECO_REPOSITORY_CATEGORY="deployment"
+export CONTECO_STARTUP_MODE="depleco"
+create-startup
+)
 
-echo ""
-echo "CLI Console v1"
-echo "Run the cli script: start.bat (WINDOWS) or ./start (LINUX)"
-echo ""
-echo "Arguments: [controlplane] [realm]"
-echo "The CLI v1 runs within a single controlplane."
-echo "You can switch CONTECO_REALM by supplying the realm as last argument"
+(
+export CONTECO_REPOSITORY_CATEGORY="external"
+export CONTECO_STARTUP_MODE="conteco"
+create-startup
+)
+
+(
+export CONTECO_REPOSITORY_CATEGORY="infometis"
+export CONTECO_STARTUP_MODE="infometis"
+create-startup
+)
+
+(
+export CONTECO_REPOSITORY_CATEGORY="interface"
+export CONTECO_STARTUP_MODE="inteco"
+create-startup
+)
+
+(
+export CONTECO_REPOSITORY_CATEGORY="internal"
+export CONTECO_STARTUP_MODE="conteco"
+create-startup
+)
+
+(
+export CONTECO_REPOSITORY_CATEGORY="module"
+export CONTECO_STARTUP_MODE="modeco"
+create-startup
+)
+
+(
+export CONTECO_REPOSITORY_CATEGORY="package"
+export CONTECO_STARTUP_MODE="modeco"
+create-startup
+)
+
+(
+export CONTECO_REPOSITORY_CATEGORY="solution"
+export CONTECO_STARTUP_MODE="soleco"
+create-startup
+)
+
 echo ""

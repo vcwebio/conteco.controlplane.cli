@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+pwd_volume="$1"
+if [[ "$pwd_volume" == *"\\"* && "$2" == "windows" ]] ; then
+  pwd_volume=$( echo $pwd_volume | tr '\\' '\/' | tr -d ':' )
+  pwd_volume="/${pwd_volume//\/\//\/}"
+  pwd_volume="${pwd_volume,,}"
+fi
+
+echo "Removing controlplane_repos data volumes ..."
+docker volume rm controlplane_repos_cluster
+docker volume rm controlplane_repos_deployment
+docker volume rm controlplane_repos_external
+docker volume rm controlplane_repos_infometis
+docker volume rm controlplane_repos_interface
+docker volume rm controlplane_repos_internal
+docker volume rm controlplane_repos_module
+docker volume rm controlplane_repos_package
+docker volume rm controlplane_repos_solution
+
+echo "Creating controlplane_repos data volumes ..."
+docker volume create --driver local --opt type=none --opt o=bind --opt device=${pwd_volume}/cluster controlplane_repos_cluster
+docker volume create --driver local --opt type=none --opt o=bind --opt device=${pwd_volume}/deployment controlplane_repos_deployment
+docker volume create --driver local --opt type=none --opt o=bind --opt device=${pwd_volume}/external controlplane_repos_external
+docker volume create --driver local --opt type=none --opt o=bind --opt device=${pwd_volume}/infometis controlplane_repos_infometis
+docker volume create --driver local --opt type=none --opt o=bind --opt device=${pwd_volume}/interface controlplane_repos_interface
+docker volume create --driver local --opt type=none --opt o=bind --opt device=${pwd_volume}/internal controlplane_repos_internal
+docker volume create --driver local --opt type=none --opt o=bind --opt device=${pwd_volume}/module controlplane_repos_module
+docker volume create --driver local --opt type=none --opt o=bind --opt device=${pwd_volume}/package controlplane_repos_package
+docker volume create --driver local --opt type=none --opt o=bind --opt device=${pwd_volume}/solution controlplane_repos_solution
+docker volume ls
+echo ""
