@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+export PATH="/conteco/bin/controlplane:${PATH}"
+export CONTECO_EXECUTIONPLANE_ORIGINALPATH="/conteco/bin/controlplane:$CONTECO_EXECUTIONPLANE_ORIGINALPATH"
+export CONTECO_EXECUTIONPLANE_BASEPATH=$CONTECO_EXECUTIONPLANE_ORIGINALPATH
+
+export CONTECO_REALM_RUNTIME="${CONTECO_REALM}"
+export CONTECO_ECOSYSTEM_RUNTIME="${CONTECO_NAME}"
+
+export CONTECO_EXECUTIONTAG=$(create-random)
+export CONTECO_REPOSITORYPREFIX="${CONTECO_REALM}/${CONTECO_ECOSYSTEM}"
+export CONTECO_INTERACTIVE="true"
+
+# extract registry from image name of running cli container
+if [[ "$(docker container ls )" != "" ]] ; then
+  while [[ "$(docker container ls | grep .cli )" == "" ]] ;
+  do
+    sleep 1
+  done;
+  imagePrefix="$(docker container ls | grep .cli | awk '{ print $2 }' FS=' ' | awk '{ print $1 }' FS='/conteco.' )"
+  registry="$( echo "${imagePrefix/${CONTECO_REALM}/}" | cut -d$'\n' -f 1)"
+  export CONTECO_REGISTRY="$registry"
+fi

@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+DOLLAR='$'
+echo "Startup arguments are missing or incorrect."
+echo "Run the appropriate command below:"
+echo ""
+echo "# WINDOWS"
+echo "docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v %cd%:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-extract-cli %cd% windows"
+echo "# LINUX"
+echo "docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v ${DOLLAR}(pwd):/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-extract-cli ${DOLLAR}(pwd) linux"
+echo "# LINUX WITH SUDO"
+echo "sudo docker run -it -v /var/run/docker.sock:/var/run/docker.sock -v ${DOLLAR}(pwd):/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli check-extract-cli ${DOLLAR}(pwd) sudo"
+echo ""

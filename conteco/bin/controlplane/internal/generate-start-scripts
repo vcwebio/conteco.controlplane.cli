@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+DOLLAR='$'
+
+echo "Generating startup scripts ..."
+if [[ "$1" == "sudo" ]] ; then
+  CONTECO_SUDO="sudo "
+fi
+
+(
+export CONTECO_REPOSITORY_CATEGORY="cluster"
+export CONTECO_STARTUP_MODE="swareco"
+create-startup
+)
+
+(
+export CONTECO_REPOSITORY_CATEGORY="deployment"
+export CONTECO_STARTUP_MODE="depleco"
+create-startup
+)
+
+(
+export CONTECO_REPOSITORY_CATEGORY="external"
+export CONTECO_STARTUP_MODE="conteco"
+create-startup
+)
+
+(
+export CONTECO_REPOSITORY_CATEGORY="infometis"
+export CONTECO_STARTUP_MODE="infometis"
+create-startup
+)
+
+(
+export CONTECO_REPOSITORY_CATEGORY="interface"
+export CONTECO_STARTUP_MODE="inteco"
+create-startup
+)
+
+(
+export CONTECO_REPOSITORY_CATEGORY="internal"
+export CONTECO_STARTUP_MODE="conteco"
+create-startup
+)
+
+(
+export CONTECO_REPOSITORY_CATEGORY="module"
+export CONTECO_STARTUP_MODE="modeco"
+create-startup
+)
+
+(
+export CONTECO_REPOSITORY_CATEGORY="package"
+export CONTECO_STARTUP_MODE="modeco"
+create-startup
+)
+
+(
+export CONTECO_REPOSITORY_CATEGORY="solution"
+export CONTECO_STARTUP_MODE="soleco"
+create-startup
+)
+
+echo ""

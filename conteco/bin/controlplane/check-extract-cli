@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# $1 current working directory
+# $2 windows / linux / sudo
+
+export PATH="/conteco/bin/controlplane/internal:$CONTECO_EXECUTIONPLANE_ORIGINALPATH"
+echo ""
+echo ""
+
+# cold start without arguments
+if [[ "$2" == "" || " windows linux sudo " != *"$2"* ]] ; then
+  message-startup-arguments
+  exit 0
+fi
+if [[ "$2" == "windows" ]] ; then
+  export CONTECO_OS="windows"
+else
+  export CONTECO_OS="linux"
+fi
+
+# Generate start scripts
+generate-start-scripts "$2"
+
+# create new controlplane_repos volume if required
+create-repository-volumes "$1" "$2"
