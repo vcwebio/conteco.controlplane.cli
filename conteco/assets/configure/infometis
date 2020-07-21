@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+
+#echo "Configuring InfoMetis ..."
+#${CONTECO_SUDO}docker run -it -v /etc:/hostfs/etc:ro -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.cli configure-infometis $@
+
+. infometis.config
+
+if [[ "$INFOMETIS_REGISTRY" == "localhost:5000/" && "$(curl ${INFOMETIS_REGISTRY_PROTOCOL}${INFOMETIS_REGISTRY}v2/)" != "{}" ]] ; then
+  echo ""
+  echo "${INFOMETIS_REGISTRY_PROTOCOL}$INFOMETIS_REGISTRY registry is not running ..."
+  echo ""
+  internal/start vcwebio conteco console start-registry
+  echo ""
+  echo "${INFOMETIS_REGISTRY_PROTOCOL}$INFOMETIS_REGISTRY registry started."
+else
+  echo ""
+  echo "${INFOMETIS_REGISTRY_PROTOCOL}$INFOMETIS_REGISTRY registry is running."
+fi
+echo ""
+
+export INFOMETIS_REGISTRY_RUNNING="true"
+if [[ "$(curl ${INFOMETIS_REGISTRY_PROTOCOL}${INFOMETIS_REGISTRY}v2/)" != "{}" ]] ; then
+  export INFOMETIS_REGISTRY_RUNNING="false"
+  echo "WARNING: REGISTRY IS NOT RUNNING"
+  echo "INFOMETIS SETUP WILL ONLY BE AVAILABLE ON THIS HOST."
+  echo ""
+  echo ""
+  exit
+fi
+
+# configuring the workspaces
+#configure/cluster
+#configure/deployment
+configure/external
+#configure/interface
+configure/internal
+configure/module
+configure/package
+configure/solution

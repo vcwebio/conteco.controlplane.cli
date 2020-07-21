@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# configuring external workspace
+internal/start console cmd rm -rf "$CONTECO_REALM"
+internal/start console load vcwebio/conteco.backup.internal
+internal/start console extract vcwebio/conteco.backup.internal
+internal/start console restore internal
+internal/start repo remove backup.internal
+internal/start console cmd chmod -R 777 "$CONTECO_REALM"
+internal/start console cmd mkdir "${INFOMETIS_REALM}"
+internal/start console cmd cp -r "${CONTECO_REALM}/*" "${INFOMETIS_REALM}"
+internal/start console cmd chmod -R 777 "${INFOMETIS_REALM}"
+internal/start "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build image.wrapper
+internal/start "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build .
+if [[ "${INFOMETIS_REGISTRY_RUNNING}" == "true" ]] ; then
+  internal/start "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" release .
+fi

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+echo ""
+echo ""
+echo "CONFIGURING INFOMETIS"
+echo "---------------------"
+echo ""
+echo "Using the configuration from infometis.config"
+echo ""

@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+
+# make it workspace calls with rm commands
+if [[ "$1" == "--reset" ]] ; then
+  cluster/start console cmd rm -rf *
+  deployment/start console cmd rm -rf *
+  external/start console cmd rm -rf *
+  infometis/start console cmd rm -rf *
+  interface/start console cmd rm -rf *
+  internal/start console cmd rm -rf *
+  package/start console cmd rm -rf *
+  module/start console cmd rm -rf *
+  solution/start console cmd rm -rf *
+  shift
+fi
+
+echo "Refreshing setup: $@"
+realm="$1"
+registry="$2"
+if [[ "$realm" == "" ]] ; then realm="${CONTECO_REALM}"; fi;
+if [[ "$registry" == "" ]] ; then registry="${CONTECO_REGISTRY}"; fi;
+docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/conteco/pwd ${registry}${realm}/conteco.controlplane.cli

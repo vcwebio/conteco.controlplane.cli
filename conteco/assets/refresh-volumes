@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+echo "Refreshing data volumes"
+
+docker container prune --force > /dev/null
+if [[ "$(docker volume ls | grep controlplane_repos )" ]] ; then
+  echo "Removing existing controlplane_repos data volumes ..."
+  clusterInUse="$(docker volume rm controlplane_repos_cluster 2>&1 | grep 'volume is in use')"
+  deploymentInUse="$(docker volume rm controlplane_repos_deployment 2>&1 | grep 'volume is in use')"
+  externalInUse="$(docker volume rm controlplane_repos_external 2>&1 | grep 'volume is in use')"
+  infometisInUse="$(docker volume rm controlplane_repos_infometis 2>&1 | grep 'volume is in use')"
+  interfaceInUse="$(docker volume rm controlplane_repos_interface 2>&1 | grep 'volume is in use')"
+  internalInUse="$(docker volume rm controlplane_repos_internal 2>&1 | grep 'volume is in use')"
+  moduleInUse="$(docker volume rm controlplane_repos_module 2>&1 | grep 'volume is in use')"
+  packageInUse="$(docker volume rm controlplane_repos_package 2>&1 | grep 'volume is in use')"
+  solutionInUse="$(docker volume rm controlplane_repos_solution 2>&1 | grep 'volume is in use')"
+  volumeInUse="${clusterInUse}${deploymentInUse}${externalInUse}${infometisInUse}${interfaceInUse}${internalInUse}${moduleInUse}${packageInUse}${solutionInUse}"
+  echo ""
+fi
+
+if [[ "$volumeInUse" == "" ]] ; then
+  echo "Creating controlplane_repos data volumes ..."
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=$(pwd)/cluster controlplane_repos_cluster
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=$(pwd)/deployment controlplane_repos_deployment
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=$(pwd)/external controlplane_repos_external
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=$(pwd)/infometis controlplane_repos_infometis
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=$(pwd)/interface controlplane_repos_interface
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=$(pwd)/internal controlplane_repos_internal
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=$(pwd)/module controlplane_repos_module
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=$(pwd)/package controlplane_repos_package
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=$(pwd)/solution controlplane_repos_solution
+else
+  echo "DATA VOLUMES IN USE. THIS IS CAUSED BY RUNNING CONTROLPLANE CONTAINERS."
+  echo "IMPORTANT: THIS SETUP ONLY SUPPORTS ONE INSTANCE BECAUSE IT CREATES A SINGLE SET OF STATIC DATA VOLUMES."
+  echo "Stop the controlplane containers and rerun this setup routine to recreate the associated data volumes for a specific setup."
+  echo ""
+  echo "The following volumes are in use:"
+  if [[ "$clusterInUse" != "" ]] ; then echo "controlplane_repos_cluster"; fi;
+  if [[ "$deploymentInUse" != "" ]] ; then echo "controlplane_repos_deployment"; fi;
+  if [[ "$externalInUse" != "" ]] ; then echo "controlplane_repos_external"; fi;
+  if [[ "$infometisInUse" != "" ]] ; then echo "controlplane_repos_infometis"; fi;
+  if [[ "$interfaceInUse" != "" ]] ; then echo "controlplane_repos_interface"; fi;
+  if [[ "$internalInUse" != "" ]] ; then echo "controlplane_repos_internal"; fi;
+  if [[ "$moduleInUse" != "" ]] ; then echo "controlplane_repos_module"; fi;
+  if [[ "$packageInUse" != "" ]] ; then echo "controlplane_repos_package"; fi;
+  if [[ "$solutionInUse" != "" ]] ; then echo "controlplane_repos_solution"; fi;
+  echo ""
+  echo ""
+  exit
+fi

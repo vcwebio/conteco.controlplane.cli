@@ -15,7 +15,7 @@ COPY ./ /conteco/repo/
 ##### END image/Dockerfile/conteco #####
 
 ##### BEGIN image/Dockerfile/build-instructions #####
-ENV CONTECO_ENTRYPOINT="check-extract-cli" \
+ENV CONTECO_ENTRYPOINT="set-up-infometis" \
     CONTECO_PREENTRYPOINT="/conteco/bin/controlplane/internal/entrypoint"
 WORKDIR /conteco/pwd
 ##### END image/Dockerfile/build-instructions #####

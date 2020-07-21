@@ -1,0 +1,177 @@
+#!/usr/bin/env bash
+# $1 current working directory
+# $2 windows / linux / sudo
+
+#  docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/conteco/pwd registry.vcweb.iot/vcwebio/conteco.controlplane.cli
+
+export PATH="/conteco/bin/controlplane/internal:$CONTECO_EXECUTIONPLANE_ORIGINALPATH"
+echo ""
+echo ""
+echo "SETTING UP INFOMETIS"
+echo "--------------------"
+echo ""
+echo "IMPORTANT: THIS SETUP ONLY SUPPORTS ONE INSTANCE BECAUSE IT CREATES A SINGLE SET OF STATIC DATA VOLUMES."
+echo "Rerun this setup routine to recreate the associated data volumes for a specific setup."
+echo ""
+
+# get container ID, check that docker daemon is accessible
+containerId="$(docker container ls | grep conteco.controlplane.cli | cut -d ' ' -f 1)"
+if [[ "$containerId" == ""  ]] ; then
+  echo "Run again and mount a volume on the docker daemon: -v /var/run/docker.sock:/var/run/docker.sock"
+  echo ""
+  echo ""
+  exit
+fi
+
+# check that working folder has been mounted
+folderMount="$(docker inspect $containerId | jq -r '.[0].Mounts[].Destination' | grep /conteco/pwd )"
+if [[ "$folderMount" == ""  ]] ; then
+  echo "The container needs to be mapped to folder on the host in order to proceed."
+  echo "Run again and mount a host working folder to /conteco/pwd: -v $(pwd):/conteco/pwd or -v %cd%:/conteco/pwd"
+  echo ""
+  echo ""
+  exit
+fi
+
+workingFolder="$(docker inspect "$containerId" | jq -r '.[0].Mounts[] | select(.Destination=="/conteco/pwd") | .Source')"
+echo "Working Folder: $workingFolder"
+
+echo "Creating workspaces and generating startup scripts ..."
+if [[ "$1" == "sudo" ]] ; then
+  CONTECO_SUDO="sudo "
+fi
+
+workspaces="\
+cluster|swareco,\
+deployment|depleco,\
+external|conteco,\
+infometis|infometis,\
+interface|inteco,\
+internal|conteco,\
+module|modeco,\
+package|modeco,\
+solution|soleco\
+"
+IFS=',' read -r -a  spaces <<< "$workspaces"
+for workspace in ${spaces[@]};
+do
+  (
+  spaceName=$(echo $workspace | cut -d'|' -f 1)
+  controlplane=$(echo $workspace | cut -d'|' -f 2)
+  export CONTECO_REPOSITORY_CATEGORY="$spaceName"
+  export CONTECO_STARTUP_MODE="$controlplane"
+
+  if [[ ! -d /conteco/pwd/${CONTECO_REPOSITORY_CATEGORY} ]] ; then
+    mkdir "/conteco/pwd/${CONTECO_REPOSITORY_CATEGORY}"
+  fi
+  cat /conteco/assets/start | envsubst '$CONTECO_SUDO,$CONTECO_ECOSYSTEM,$CONTECO_REALM,$CONTECO_REGISTRY,$CONTECO_REPOSITORY_CATEGORY,$CONTECO_STARTUP_MODE'	> "/conteco/pwd/${CONTECO_REPOSITORY_CATEGORY}/start"
+  cat /conteco/assets/start.bat | envsubst '$CONTECO_ECOSYSTEM,$CONTECO_REALM,$CONTECO_REGISTRY,$CONTECO_REPOSITORY_CATEGORY,$CONTECO_STARTUP_MODE'	> "/conteco/pwd/${CONTECO_REPOSITORY_CATEGORY}/start.bat"
+  chmod a+x /conteco/pwd/${CONTECO_REPOSITORY_CATEGORY}/start
+  chmod a+x /conteco/pwd/${CONTECO_REPOSITORY_CATEGORY}/start.bat
+
+  echo "${CONTECO_REPOSITORY_CATEGORY}/start & ${CONTECO_REPOSITORY_CATEGORY}/start.bat"
+  )
+done;
+
+cp /conteco/assets/infometis.config /conteco/pwd/infometis.config
+chmod a+x /conteco/assets/infometis.config /conteco/pwd/infometis.config
+cat /conteco/assets/refresh-setup | envsubst '$CONTECO_REGISTRY,$CONTECO_REALM' > /conteco/pwd/refresh-setup
+chmod a+x /conteco/assets/refresh-setup /conteco/pwd/refresh-setup
+cp /conteco/assets/refresh-setup /conteco/pwd/refresh-volumes
+chmod a+x /conteco/assets/refresh-setup /conteco/pwd/refresh-volumes
+echo ""
+
+echo "Creating configure scripts ..."
+for folder in /conteco/assets/*
+do
+  echo "$folder"
+  if [[ -d $folder ]] ; then
+    folderName="$(basename $folder)"
+    if [[ ! -d /conteco/pwd/$folderName ]] ; then
+      mkdir "/conteco/pwd/$folderName"
+    fi
+    for file in $folder/*
+    do
+      echo "$file"
+      fileName="$(basename $file)"
+      cat $file | envsubst '$CONTECO_SUDO,$CONTECO_ECOSYSTEM,$CONTECO_REALM,$CONTECO_REGISTRY'	> "/conteco/pwd/$folderName/$fileName"
+      chmod a+x /conteco/pwd/$folderName/$fileName
+    done
+  fi
+done
+echo ""
+
+# check existing data volumes
+docker container prune --force > /dev/null
+if [[ "$(docker volume ls | grep controlplane_repos )" ]] ; then
+  echo "Removing existing controlplane_repos data volumes ..."
+  clusterInUse="$(docker volume rm controlplane_repos_cluster 2>&1 | grep 'volume is in use')"
+  deploymentInUse="$(docker volume rm controlplane_repos_deployment 2>&1 | grep 'volume is in use')"
+  externalInUse="$(docker volume rm controlplane_repos_external 2>&1 | grep 'volume is in use')"
+  infometisInUse="$(docker volume rm controlplane_repos_infometis 2>&1 | grep 'volume is in use')"
+  interfaceInUse="$(docker volume rm controlplane_repos_interface 2>&1 | grep 'volume is in use')"
+  internalInUse="$(docker volume rm controlplane_repos_internal 2>&1 | grep 'volume is in use')"
+  moduleInUse="$(docker volume rm controlplane_repos_module 2>&1 | grep 'volume is in use')"
+  packageInUse="$(docker volume rm controlplane_repos_package 2>&1 | grep 'volume is in use')"
+  solutionInUse="$(docker volume rm controlplane_repos_solution 2>&1 | grep 'volume is in use')"
+  volumeInUse="${clusterInUse}${deploymentInUse}${externalInUse}${infometisInUse}${interfaceInUse}${internalInUse}${moduleInUse}${packageInUse}${solutionInUse}"
+  echo ""
+fi
+
+if [[ "$volumeInUse" == "" ]] ; then
+  echo "Creating controlplane_repos data volumes ..."
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=${workingFolder}/cluster controlplane_repos_cluster
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=${workingFolder}/deployment controlplane_repos_deployment
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=${workingFolder}/external controlplane_repos_external
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=${workingFolder}/infometis controlplane_repos_infometis
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=${workingFolder}/interface controlplane_repos_interface
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=${workingFolder}/internal controlplane_repos_internal
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=${workingFolder}/module controlplane_repos_module
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=${workingFolder}/package controlplane_repos_package
+  docker volume create --driver local --opt type=none --opt o=bind --opt device=${workingFolder}/solution controlplane_repos_solution
+else
+  echo "DATA VOLUMES IN USE. THIS IS CAUSED BY RUNNING CONTROLPLANE CONTAINERS."
+  echo "IMPORTANT: THIS SETUP ONLY SUPPORTS ONE INSTANCE BECAUSE IT CREATES A SINGLE SET OF STATIC DATA VOLUMES."
+  echo "Stop the controlplane containers and rerun this setup routine to recreate the associated data volumes for a specific setup."
+  echo ""
+  echo "The following volumes are in use:"
+  if [[ "$clusterInUse" != "" ]] ; then echo "controlplane_repos_cluster"; fi;
+  if [[ "$deploymentInUse" != "" ]] ; then echo "controlplane_repos_deployment"; fi;
+  if [[ "$externalInUse" != "" ]] ; then echo "controlplane_repos_external"; fi;
+  if [[ "$infometisInUse" != "" ]] ; then echo "controlplane_repos_infometis"; fi;
+  if [[ "$interfaceInUse" != "" ]] ; then echo "controlplane_repos_interface"; fi;
+  if [[ "$internalInUse" != "" ]] ; then echo "controlplane_repos_internal"; fi;
+  if [[ "$moduleInUse" != "" ]] ; then echo "controlplane_repos_module"; fi;
+  if [[ "$packageInUse" != "" ]] ; then echo "controlplane_repos_package"; fi;
+  if [[ "$solutionInUse" != "" ]] ; then echo "controlplane_repos_solution"; fi;
+  echo ""
+  echo ""
+  exit
+fi
+
+echo ""
+echo "Amend infometis.config file to change default setup configuration."
+echo "By default InfoMetis is set up air-gapped, using a localhost registry and 'im_user/' as image name prefix (called realm)."
+echo "You can set your own realm (INFOMETIS_REALM) and registry (INFOMETIS_REGISTRY) or leave them blank."
+echo "A blank realm and/or registry reverts to using vcwebio and Docker Hub respectively."
+echo ""
+echo "Using you own REALM or REGISTRY will result in download of the initial external images and build of the other images."
+echo ""
+echo "You can set up specific workspaces by running workspace specific scripts: (add .bat on Windows)"
+echo "configure/cluster"
+echo "configure/deployment"
+echo "configure/external"
+echo "configure/interface"
+echo "configure/internal"
+echo "configure/module"
+echo "configure/package"
+echo "configure/solution"
+echo ""
+echo "To fully set up or update InfoMetis run the following script:"
+echo "Linux: configure/infometis"
+echo "Windows: configure/infometis.bat"
+echo ""
+echo "To start the controplane for a specific workspace run <workspace>/start as per example below:"
+echo "Linux: solution/start"
+echo "Windows: solution/start.bat"
+echo ""
