@@ -73,7 +73,9 @@ do
   )
 done;
 
-cp /conteco/assets/infometis.config /conteco/pwd/infometis.config
+if [[ ! -d /conteco/pwd/infometis.config ]] ; then
+  cp /conteco/assets/infometis.config /conteco/pwd/infometis.config
+fi
 chmod a+x /conteco/assets/infometis.config /conteco/pwd/infometis.config
 cat /conteco/assets/refresh-setup | envsubst '$CONTECO_REGISTRY,$CONTECO_REALM' > /conteco/pwd/refresh-setup
 chmod a+x /conteco/assets/refresh-setup /conteco/pwd/refresh-setup

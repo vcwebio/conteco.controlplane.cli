@@ -25,7 +25,6 @@ if [[ "$(curl ${INFOMETIS_REGISTRY_PROTOCOL}${INFOMETIS_REGISTRY}v2/)" != "{}" ]
   echo "INFOMETIS SETUP WILL ONLY BE AVAILABLE ON THIS HOST."
   echo ""
   echo ""
-  exit
 fi
 
 # configuring the workspaces
