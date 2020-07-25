@@ -4,10 +4,10 @@ services:
 
 # START SERVICE controlplane.cli
   controlplane:
-    image: ${CONTECO_REGISTRY}${CONTECO_REALM_RUNTIME}/conteco.${CONTECO_DC_GLOBAL_IMAGE_NAME}
-    environment: []
+    image: ${CONTECO_REGISTRY}${CONTECO_REALM_RUNTIME}/conteco.controlplane.cli:v2.0.7
+    environment: [${CONTECO_DC_CONTROLPLANE_ENVIRONMENT}]
     command: [${CONTECO_DC_CONTROLPLANE_COMMAND}]
-    volumes: [${CONTECO_DC_CONTROLPLANE_VOLUMES}]
+    volumes: ['/etc:/hostfs/etc:ro','/var/run/docker.sock:/var/run/docker.sock','controlplane_repos:/conteco/pwd']
     ports: []
     networks: []
     deploy:
@@ -21,5 +21,5 @@ ${CONTECO_DC_CONTROLPLANE_COMPOSE_EXTENSIONS}
 # END SERVICE controlplane.cli
 
 networks: {}
-volumes: {${CONTECO_TYPE}_conteco_dc_controlplane_volume: { external: true }}
+volumes: {controlplane_repos: { external: true }}
 ${CONTECO_DC_GLOBAL_COMPOSE_EXTENSIONS}

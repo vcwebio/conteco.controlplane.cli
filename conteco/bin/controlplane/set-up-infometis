@@ -33,6 +33,11 @@ if [[ "$folderMount" == ""  ]] ; then
   exit
 fi
 
+# SHOULD SWITCH TO VOLUME controlplane_repos MAPPED ONTO pwd
+# THIS ENABLES THE EXTRACTION PROCESS TO RUN AS A SERVICE TASK
+# THE CURRENT SETUP IS NOT ADEQUATE FOR THIS HOWEVER AS THE CONTROLPLANE CONTEXT IS STATIC
+# ON THE OTHER HAND, IT IS TOO EARLY TO MOVE TO controlplane_repos INSTANCES
+
 workingFolder="$(docker inspect "$containerId" | jq -r '.[0].Mounts[] | select(.Destination=="/conteco/pwd") | .Source')"
 echo "Working Folder: $workingFolder"
 
