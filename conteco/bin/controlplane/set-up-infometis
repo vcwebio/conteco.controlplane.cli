@@ -79,7 +79,9 @@ do
 done;
 
 if [[ ! -d /conteco/pwd/infometis.config ]] ; then
-  cp /conteco/assets/infometis.config /conteco/pwd/infometis.config
+  export CONTECO_REGISTRY_ORIGIN="${CONTECO_REGISTRY}"
+  if [[ "${CONTECO_REGISTRY_ORIGIN}" == "" ]] ; then export CONTECO_REGISTRY_ORIGIN="Docker Hub"; fi
+  cat /conteco/assets/infometis.config | envsubst '$CONTECO_REALM,$CONTECO_REGISTRY_ORIGIN'	> /conteco/pwd/infometis.config
 fi
 chmod a+x /conteco/assets/infometis.config /conteco/pwd/infometis.config
 cat /conteco/assets/refresh-setup | envsubst '$CONTECO_REGISTRY,$CONTECO_REALM' > /conteco/pwd/refresh-setup
