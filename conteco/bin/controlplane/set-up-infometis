@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
-# $1 current working directory
-# $2 windows / linux / sudo
-
-#  docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/conteco/pwd registry.vcweb.iot/vcwebio/conteco.controlplane.cli
+# $1 sudo
 
 export PATH="/conteco/bin/controlplane/internal:$CONTECO_EXECUTIONPLANE_ORIGINALPATH"
 echo ""
@@ -12,6 +9,9 @@ echo "--------------------"
 echo ""
 echo "IMPORTANT: THIS SETUP ONLY SUPPORTS ONE INSTANCE BECAUSE IT CREATES A SINGLE SET OF STATIC DATA VOLUMES."
 echo "Rerun this setup routine to recreate the associated data volumes for a specific setup."
+echo ""
+echo "IMPORTANT: IF YOU REQUIRE SUDO FOR DOCKER"
+echo "append --base sudo to the end of the docker command"
 echo ""
 
 # get container ID, check that docker daemon is accessible
@@ -43,7 +43,7 @@ echo "Working Folder: $workingFolder"
 
 echo "Creating workspaces and generating startup scripts ..."
 if [[ "$1" == "sudo" ]] ; then
-  CONTECO_SUDO="sudo "
+  export CONTECO_SUDO="sudo "
 fi
 
 workspaces="\
@@ -84,10 +84,11 @@ if [[ ! -d /conteco/pwd/infometis.config ]] ; then
   cat /conteco/assets/infometis.config | envsubst '$CONTECO_REALM,$CONTECO_REGISTRY_ORIGIN'	> /conteco/pwd/infometis.config
 fi
 chmod a+x /conteco/assets/infometis.config /conteco/pwd/infometis.config
-cat /conteco/assets/refresh-setup | envsubst '$CONTECO_REGISTRY,$CONTECO_REALM' > /conteco/pwd/refresh-setup
+cat /conteco/assets/refresh-setup | envsubst '$CONTECO_SUDO,$CONTECO_REGISTRY,$CONTECO_REALM' > /conteco/pwd/refresh-setup
 chmod a+x /conteco/assets/refresh-setup /conteco/pwd/refresh-setup
-cp /conteco/assets/refresh-setup /conteco/pwd/refresh-volumes
-chmod a+x /conteco/assets/refresh-setup /conteco/pwd/refresh-volumes
+cat /conteco/assets/refresh-setup | envsubst '$CONTECO_SUDO,$CONTECO_REGISTRY,$CONTECO_REALM' > /conteco/pwd/refresh-setup
+cat /conteco/assets/refresh-volumes | envsubst '$CONTECO_SUDO,$CONTECO_REGISTRY,$CONTECO_REALM' > /conteco/pwd/refresh-volumes
+chmod a+x /conteco/assets/refresh-volumes /conteco/pwd/refresh-volumes
 echo ""
 
 echo "Creating configure scripts ..."
