@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
 
 # configuring external workspace
-solution/start console cmd rm -rf "$CONTECO_REALM"
-solution/start console load vcwebio/soleco.backup.solution
-solution/start console extract vcwebio/soleco.backup.solution
-solution/start console restore solution
-solution/start repo remove backup.solution
-solution/start console cmd chmod -R 777 "$CONTECO_REALM"
-solution/start console cmd mkdir "${INFOMETIS_REALM}"
-solution/start console cmd cp -r "${CONTECO_REALM}/*" "${INFOMETIS_REALM}"
-solution/start console cmd chmod -R 777 "${INFOMETIS_REALM}"
-solution/start "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build image.wrapper
-solution/start "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build .
+solution/exec console cmd rm -rf "$CONTECO_REALM"
+solution/exec console load vcwebio/soleco.backup.solution
+solution/exec console extract vcwebio/soleco.backup.solution
+solution/exec console restore solution
+solution/exec repo remove backup.solution
+solution/exec console cmd chmod -R 777 "$CONTECO_REALM"
+solution/exec console cmd mkdir "${INFOMETIS_REALM}"
+solution/exec console cmd cp -r "${CONTECO_REALM}/*" "${INFOMETIS_REALM}"
+solution/exec console cmd chmod -R 777 "${INFOMETIS_REALM}"
+solution/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build image.wrapper
+solution/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build .
 if [[ "${INFOMETIS_REGISTRY_RUNNING}" == "true" ]] ; then
-  solution/start "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" release .
+  solution/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" release .
 fi

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+echo "$(date) - controlplane.${CONTECO_STARTUP_MODE} - executing $@"
+${CONTECO_SUDO}docker run -it -v /etc:/hostfs/etc:ro -v /var/run/docker.sock:/var/run/docker.sock -v controlplane_repos_${CONTECO_REPOSITORY_CATEGORY}:/conteco/pwd ${CONTECO_REGISTRY}${CONTECO_REALM}/${CONTECO_ECOSYSTEM}.controlplane.${CONTECO_STARTUP_MODE} start-cli container ${CONTECO_REPOSITORY_CATEGORY} $@ > /dev/null
+echo "$(date) - controlplane.${CONTECO_STARTUP_MODE} - execution completed."

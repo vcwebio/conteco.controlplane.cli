@@ -19,4 +19,13 @@ realm="$1"
 registry="$2"
 if [[ "$realm" == "" ]] ; then realm="${CONTECO_REALM}"; fi;
 if [[ "$registry" == "" ]] ; then registry="${CONTECO_REGISTRY}"; fi;
+${CONTECO_SUDO}docker pull ${registry}${realm}/conteco.controlplane.base
+${CONTECO_SUDO}docker pull ${registry}${realm}/conteco.controlplane.cli
+${CONTECO_SUDO}docker pull ${registry}${realm}/conteco.controlplane.conteco
+${CONTECO_SUDO}docker pull ${registry}${realm}/conteco.controlplane.depleco
+${CONTECO_SUDO}docker pull ${registry}${realm}/conteco.controlplane.infometis
+${CONTECO_SUDO}docker pull ${registry}${realm}/conteco.controlplane.inteco
+${CONTECO_SUDO}docker pull ${registry}${realm}/conteco.controlplane.modeco
+${CONTECO_SUDO}docker pull ${registry}${realm}/conteco.controlplane.soleco
+${CONTECO_SUDO}docker pull ${registry}${realm}/conteco.controlplane.swareco
 ${CONTECO_SUDO}docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/conteco/pwd ${registry}${realm}/conteco.controlplane.cli

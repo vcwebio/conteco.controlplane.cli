@@ -9,7 +9,7 @@ if [[ "$INFOMETIS_REGISTRY" == "localhost:5000/" && "$(curl ${INFOMETIS_REGISTRY
   echo ""
   echo "${INFOMETIS_REGISTRY_PROTOCOL}$INFOMETIS_REGISTRY registry is not running ..."
   echo ""
-  internal/start vcwebio conteco console start-registry
+  internal/exec console start-registry
   echo ""
   echo "${INFOMETIS_REGISTRY_PROTOCOL}$INFOMETIS_REGISTRY registry started."
 else
