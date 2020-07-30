@@ -29,8 +29,8 @@ fi
 
 # configuring the workspaces
 _configure/external
-_configure/package
 _configure/internal
+_configure/package
 _configure/module
 _configure/solution
 #_configure/cluster

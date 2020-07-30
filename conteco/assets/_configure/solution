@@ -10,7 +10,6 @@ solution/exec console cmd chmod -R 777 "$CONTECO_REALM"
 solution/exec console cmd mkdir "${INFOMETIS_REALM}"
 solution/exec console cmd cp -r "${CONTECO_REALM}/*" "${INFOMETIS_REALM}"
 solution/exec console cmd chmod -R 777 "${INFOMETIS_REALM}"
-solution/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build image.wrapper
 solution/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build .
 if [[ "${INFOMETIS_REGISTRY_RUNNING}" == "true" ]] ; then
   solution/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" release .
