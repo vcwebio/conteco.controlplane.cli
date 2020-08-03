@@ -12,6 +12,5 @@ module/exec console cmd chmod -R 777 "${INFOMETIS_REALM}"
 module/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" console backup module
 module/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build .
 if [[ "${INFOMETIS_REGISTRY_RUNNING}" == "true" ]] ; then
-  module/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" release backup.module
   module/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" release .
 fi

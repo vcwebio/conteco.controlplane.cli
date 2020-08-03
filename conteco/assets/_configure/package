@@ -10,6 +10,7 @@ package/exec console cmd mkdir "${INFOMETIS_REALM}"
 package/exec console cmd cp -r "${CONTECO_REALM}/*" "${INFOMETIS_REALM}"
 package/exec console cmd chmod -R 777 "${INFOMETIS_REALM}"
 package/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" console backup package
+package/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build backup.package
 package/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build .
 if [[ "${INFOMETIS_REGISTRY_RUNNING}" == "true" ]] ; then
   package/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" release backup.package
