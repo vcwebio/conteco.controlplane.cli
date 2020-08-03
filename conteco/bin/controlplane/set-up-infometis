@@ -80,7 +80,7 @@ do
   )
 done;
 
-if [[ ! -d /conteco/pwd/infometis.config ]] ; then
+if [[ ! -f /conteco/pwd/infometis.config ]] ; then
   export CONTECO_REGISTRY_ORIGIN="${CONTECO_REGISTRY}"
   if [[ "${CONTECO_REGISTRY_ORIGIN}" == "" ]] ; then export CONTECO_REGISTRY_ORIGIN="Docker Hub"; fi
   cat /conteco/assets/infometis.config | envsubst '$CONTECO_REALM,$CONTECO_REGISTRY_ORIGIN'	> /conteco/pwd/infometis.config
