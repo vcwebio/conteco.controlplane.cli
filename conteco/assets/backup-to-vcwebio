@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+echo "Releasing backups to vcwebio ..."
+
+# first remove backup images in existence
+docker image rm --force $(docker image ls | grep .backup. | cut -d$'\t' -f 3)
+
+external/exec console backup external @ build backup. @ release backup. @ repo retag-image vcwebio backup.
+internal/exec console backup internal @ build backup. @ release backup. @ repo retag-image vcwebio backup.
+package/exec console backup package @ build backup. @ release backup. @ repo retag-image vcwebio backup.
+module/exec console backup module @ build backup. @ release backup. @ repo retag-image vcwebio backup.
+solution/exec console backup solution @ build backup. @ release backup. @ repo retag-image vcwebio backup.
+
+docker login
+docker push vcwebio/conteco.backup.external
+docker push vcwebio/conteco.backup.internal
+docker push vcwebio/modeco.backup.package
+docker push vcwebio/modeco.backup.module
+docker push vcwebio/soleco.backup.solution

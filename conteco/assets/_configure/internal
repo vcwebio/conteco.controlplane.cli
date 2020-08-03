@@ -5,11 +5,11 @@ internal/exec console cmd rm -rf "$CONTECO_REALM"
 internal/exec console load vcwebio/conteco.backup.internal
 internal/exec console extract vcwebio/conteco.backup.internal
 internal/exec console restore internal
-internal/exec repo remove backup.internal
 internal/exec console cmd chmod -R 777 "$CONTECO_REALM"
 internal/exec console cmd mkdir "${INFOMETIS_REALM}"
 internal/exec console cmd cp -r "${CONTECO_REALM}/*" "${INFOMETIS_REALM}"
 internal/exec console cmd chmod -R 777 "${INFOMETIS_REALM}"
+internal/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" console backup internal
 internal/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build image.wrapper
 internal/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build .
 if [[ "${INFOMETIS_REGISTRY_RUNNING}" == "true" ]] ; then

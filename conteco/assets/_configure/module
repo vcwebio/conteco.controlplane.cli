@@ -5,11 +5,11 @@ module/exec console cmd rm -rf "$CONTECO_REALM"
 module/exec console load vcwebio/modeco.backup.module
 module/exec console extract vcwebio/modeco.backup.module
 module/exec console restore module
-module/exec repo remove backup.module
 module/exec console cmd chmod -R 777 "$CONTECO_REALM"
 module/exec console cmd mkdir "${INFOMETIS_REALM}"
 module/exec console cmd cp -r "${CONTECO_REALM}/*" "${INFOMETIS_REALM}"
 module/exec console cmd chmod -R 777 "${INFOMETIS_REALM}"
+module/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" console backup module
 module/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build .
 if [[ "${INFOMETIS_REGISTRY_RUNNING}" == "true" ]] ; then
   module/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" release .

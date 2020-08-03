@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+workDir="$1"
+if [[ "$workDir" == "/"* ]] ; then shift; else workdDir=""; fi
+if [[ "$workDir" == "" ]] ; then workdDir="$(pwd)"; fi
 
 # make it workspace calls with rm commands
 if [[ "$1" == "--reset" ]] ; then
@@ -28,4 +31,4 @@ ${CONTECO_SUDO}docker pull ${registry}${realm}/conteco.controlplane.inteco
 ${CONTECO_SUDO}docker pull ${registry}${realm}/conteco.controlplane.modeco
 ${CONTECO_SUDO}docker pull ${registry}${realm}/conteco.controlplane.soleco
 ${CONTECO_SUDO}docker pull ${registry}${realm}/conteco.controlplane.swareco
-${CONTECO_SUDO}docker run -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd):/conteco/pwd ${registry}${realm}/conteco.controlplane.cli
+${CONTECO_SUDO}docker run -v /var/run/docker.sock:/var/run/docker.sock -v $workDir:/conteco/pwd ${registry}${realm}/conteco.controlplane.cli --base ${CONTECO_SUDO}

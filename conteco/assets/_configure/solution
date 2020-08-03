@@ -5,11 +5,11 @@ solution/exec console cmd rm -rf "$CONTECO_REALM"
 solution/exec console load vcwebio/soleco.backup.solution
 solution/exec console extract vcwebio/soleco.backup.solution
 solution/exec console restore solution
-solution/exec repo remove backup.solution
 solution/exec console cmd chmod -R 777 "$CONTECO_REALM"
 solution/exec console cmd mkdir "${INFOMETIS_REALM}"
 solution/exec console cmd cp -r "${CONTECO_REALM}/*" "${INFOMETIS_REALM}"
 solution/exec console cmd chmod -R 777 "${INFOMETIS_REALM}"
+solution/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" console backup solution
 solution/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build .
 if [[ "${INFOMETIS_REGISTRY_RUNNING}" == "true" ]] ; then
   solution/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" release .

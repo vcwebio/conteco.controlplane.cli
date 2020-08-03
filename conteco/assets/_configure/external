@@ -5,13 +5,14 @@ external/exec console cmd rm -rf "$CONTECO_REALM"
 external/exec console load vcwebio/conteco.backup.external
 external/exec console extract vcwebio/conteco.backup.external
 external/exec console restore external
-external/exec repo remove backup.external
 external/exec repo load .
 external/exec repo retag-image "${INFOMETIS_REGISTRY}${INFOMETIS_REALM}" .
 external/exec console cmd chmod -R 777 "$CONTECO_REALM"
 external/exec console cmd mkdir "${INFOMETIS_REALM}"
 external/exec console cmd cp -r "${CONTECO_REALM}/*" "${INFOMETIS_REALM}"
 external/exec console cmd chmod -R 777 "${INFOMETIS_REALM}"
+external/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" console backup external
+external/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" build backup.external
 if [[ "${INFOMETIS_REGISTRY_RUNNING}" == "true" ]] ; then
   external/exec "--registry=${INFOMETIS_REGISTRY}" "--realm=${INFOMETIS_REALM}" release .
 fi

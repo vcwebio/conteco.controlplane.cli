@@ -26,13 +26,14 @@ if [[ "$(curl ${INFOMETIS_REGISTRY_PROTOCOL}${INFOMETIS_REGISTRY}v2/)" != "{}" ]
   echo ""
   echo ""
 fi
+export INFOMETIS_REGISTRY_RUNNING="true"
 
 # configuring the workspaces
-_configure/external
-_configure/internal
-_configure/package
-_configure/module
-_configure/solution
+. _configure/external
+. _configure/internal
+. _configure/package
+. _configure/module
+. _configure/solution
 #_configure/cluster
 #_configure/interface
 #_configure/deployment
