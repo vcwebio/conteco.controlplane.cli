@@ -85,12 +85,13 @@ if [[ ! -f /conteco/pwd/infometis.config ]] ; then
   if [[ "${CONTECO_REGISTRY_ORIGIN}" == "" ]] ; then export CONTECO_REGISTRY_ORIGIN="Docker Hub"; fi
   cat /conteco/assets/infometis.config | envsubst '$CONTECO_REALM,$CONTECO_REGISTRY_ORIGIN'	> /conteco/pwd/infometis.config
 fi
-chmod a+x /conteco/assets/infometis.config /conteco/pwd/infometis.config
+chmod a+x /conteco/pwd/infometis.config
 cat /conteco/assets/refresh-setup | envsubst '$CONTECO_SUDO,$CONTECO_REGISTRY,$CONTECO_REALM' > /conteco/pwd/refresh-setup
-chmod a+x /conteco/assets/refresh-setup /conteco/pwd/refresh-setup
-cat /conteco/assets/refresh-setup | envsubst '$CONTECO_SUDO,$CONTECO_REGISTRY,$CONTECO_REALM' > /conteco/pwd/refresh-setup
+chmod a+x /conteco/pwd/refresh-setup
+cat /conteco/assets/refresh-setup.bat | envsubst '$CONTECO_SUDO,$CONTECO_REGISTRY,$CONTECO_REALM' > /conteco/pwd/refresh-setup.bat
+chmod a+x /conteco/pwd/refresh-setup.bat
 cat /conteco/assets/refresh-volumes | envsubst '$CONTECO_SUDO,$CONTECO_REGISTRY,$CONTECO_REALM' > /conteco/pwd/refresh-volumes
-chmod a+x /conteco/assets/refresh-volumes /conteco/pwd/refresh-volumes
+chmod a+x /conteco/pwd/refresh-volumes
 echo ""
 
 echo "Creating configure scripts ..."
